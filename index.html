@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#234c40">
+  <meta name="description" content="A quiet space to study. Import your CSV flashcards, review at your pace, and practice with multiple-choice questions — even offline.">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="icon" href="./icon-192.png" type="image/png">
+  <link rel="apple-touch-icon" href="./apple-touch-icon.png">
+  <link rel="stylesheet" href="./styles.css">
+  <title>Recall · Your space to study</title>
+</head>
+<body>
+  <div id="notice" class="notice" role="status" hidden></div>
+  <main id="study" tabindex="-1">
+    <input type="file" id="file-input" accept=".csv,text/csv,text/plain" hidden>
+    <section id="empty-state" class="empty-state"><button id="empty-import" class="primary">Import CSV</button></section>
+    <section id="deck-panel" aria-label="Study your deck" hidden>
+      <div class="study-toolbar">
+        <div class="mode-switch" role="group" aria-label="Study mode"><button id="review-mode" aria-pressed="true">Flashcards</button><button id="quiz-mode" aria-pressed="false">MCQ</button></div>
+        <label class="swap-control"><input id="swap" type="checkbox" role="switch"><span>Swap sides</span></label>
+        <div class="size-controls" role="group" aria-label="Text size"><button id="text-smaller" aria-label="Decrease text size">A−</button><button id="text-larger" aria-label="Increase text size">A+</button></div>
+        <div id="review-controls" class="review-controls"><button id="previous" class="secondary" aria-label="Previous card">←</button><button id="flip" class="secondary">Flip</button><button id="next" class="secondary" aria-label="Next card">→</button></div>
+        <label id="quiz-order-control" class="swap-control" hidden><input id="quiz-shuffle" type="checkbox" role="switch"><span>Shuffle</span></label>
+        <span id="progress" class="study-progress" aria-live="polite"></span>
+        <button id="end-session" class="quiet">End session</button>
+      </div>
+      <div id="review-view">
+        <button id="flashcard" class="flashcard" aria-label="Flip card"><span id="card-text" class="card-text"></span></button>
+      </div>
+      <div id="quiz-view" hidden>
+        <div id="quiz-active" hidden>
+          <div class="question-card"><div id="question-text" tabindex="-1"></div></div>
+          <div id="choices" class="choices" aria-label="Answer choices"></div>
+          <div id="feedback" class="feedback" role="status"></div>
+        </div>
+        <div id="quiz-results" class="results" hidden><div class="result-actions"><button id="retry-missed" class="primary">Practice missed cards</button><button id="practice-again" class="secondary">Practice again</button></div><div id="missed-list"></div></div>
+      </div>
+    </section>
+  </main>
+  <dialog id="confirm-dialog"><h2 id="confirm-title"></h2><p id="confirm-text"></p><div class="dialog-actions"><button id="cancel-confirm" class="secondary">Cancel</button><button id="accept-confirm" class="primary">Continue</button></div></dialog>
+  <script type="module" src="./app.js"></script>
+</body>
+</html>
