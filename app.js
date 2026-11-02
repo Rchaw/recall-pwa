@@ -180,13 +180,14 @@ window.addEventListener('keydown', event => {
 if ('serviceWorker' in navigator && window.isSecureContext) {
   navigator.serviceWorker.register('./sw.js').catch(() => {});
 }
-$('theme-toggle').onclick = () => {
-  const dark = document.documentElement.dataset.theme !== 'dark';
+function setTheme(dark) {
   document.documentElement.dataset.theme = dark ? 'dark' : 'light';
   $('theme-toggle').textContent = dark ? 'Light' : 'Dark';
   $('theme-toggle').setAttribute('aria-pressed', String(dark));
   $('theme-toggle').setAttribute('aria-label', dark ? 'Switch to light mode' : 'Switch to dark mode');
-};
+}
+setTheme(true);
+$('theme-toggle').onclick = () => setTheme(document.documentElement.dataset.theme !== 'dark');
 let textSize = 200;
 function applyTextSize() {
   document.documentElement.style.setProperty('--study-size', `${textSize / 100}`);

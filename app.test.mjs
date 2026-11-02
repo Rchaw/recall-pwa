@@ -186,12 +186,13 @@ async function appHarness() {
   const handlers={}, removed=[], timers = new Map(); let nextTimer = 1;
   const fakeSetTimeout = (fn, delay) => { const id = nextTimer++; timers.set(id,{fn,delay}); return id; };
   const fakeClearTimeout = id => timers.delete(id);
-  const document={documentElement:{style:{setProperty(){}}},getElementById:id=>nodes[id],querySelector:()=>Object.values(nodes).find(n=>n.open)||null,querySelectorAll:()=>[],createElement:tag=>new Element(tag)};
+  const styleValues={};
+  const document={documentElement:{dataset:{},style:{setProperty(name,value){styleValues[name]=value;}}},getElementById:id=>nodes[id],querySelector:()=>Object.values(nodes).find(n=>n.open)||null,querySelectorAll:()=>[],createElement:tag=>new Element(tag)};
   const context=vm.createContext({document,Element,URL,Blob,setTimeout:fakeSetTimeout,clearTimeout:fakeClearTimeout,location:{href:'https://example.test/recall/'},navigator:{onLine:true},localStorage:{removeItem:key=>removed.push(key),getItem:()=>assert.fail('Deck data must not be read from storage'),setItem:()=>assert.fail('Deck data must not be saved')},window:{addEventListener:(type,fn)=>{handlers[type]=fn;},isSecureContext:true}});
   const core=(await readFile(new URL('./core.js',import.meta.url),'utf8')).replace(/^export /gm,'');
   const app=(await readFile(new URL('./app.js',import.meta.url),'utf8')).replace(/^import .*;\n/,'');
   vm.runInContext(core+'\n'+app,context);
-  return {nodes,removed,runTimers(){const pending=[...timers.values()]; timers.clear(); for(const timer of pending) timer.fn();}, timerDelays(){return [...timers.values()].map(t=>t.delay);},inspect:expr=>vm.runInContext(expr,context),async import(text,name='Test.csv'){nodes['file-input'].files=[{name,size:text.length,text:async()=>text}];await nodes['file-input'].onchange();},key(key,repeat=false,targetTag='div',inputType=''){ const target=new Element(targetTag); target.type=inputType; let prevented=false; handlers.keydown({key,repeat,target,preventDefault(){prevented=true;}}); return prevented; }};
+  return {nodes,removed,styleValues,runTimers(){const pending=[...timers.values()]; timers.clear(); for(const timer of pending) timer.fn();}, timerDelays(){return [...timers.values()].map(t=>t.delay);},inspect:expr=>vm.runInContext(expr,context),async import(text,name='Test.csv'){nodes['file-input'].files=[{name,size:text.length,text:async()=>text}];await nodes['file-input'].onchange();},key(key,repeat=false,targetTag='div',inputType=''){ const target=new Element(targetTag); target.type=inputType; let prevented=false; handlers.keydown({key,repeat,target,preventDefault(){prevented=true;}}); return prevented; }};
 }
 test('real app imports one temporary deck, rejects invalid replacements, and clears on End session or reload', async () => {
   const app=await appHarness();
@@ -219,7 +220,8 @@ test('real app wrong-answer key and tap continuation never score the next questi
   app.key('1',true); assert.equal(app.inspect('session.position'),0);
   app.key('1'); assert.equal(app.inspect('session.position'),1); assert.equal(app.inspect('session.answers.length'),1);
   const wrong2=app.inspect('(question.correct + 1) % 4'); app.key(String(wrong2+1));
-  assert.equal(app.nodes.feedback.textContent,'✕');
+  assert.equal(app.nodes.choices.children[wrong2].classes.has('wrong'),true);
+  assert.equal(app.nodes.choices.children[app.inspect('question.correct')].classes.has('correct'),true);
   app.nodes.choices.children[0].click();
   assert.equal(app.inspect('session.position'),2); assert.equal(app.inspect('session.answers.length'),2);
 });
@@ -368,4 +370,44 @@ test('a perfect run hides missed-card practice and the list', async () => {
   while (app.inspect('session.position < session.order.length')) { app.key(String(app.inspect('question.correct')+1)); app.runTimers(); }
   assert.equal(app.nodes['retry-missed'].hidden,true);
   assert.equal(app.nodes['missed-list'].children.length,0);
+});
+
+
+test('text size starts at 200%, changes by 20 points, and reaches its limits in both modes', async () => {
+  const app = await appHarness(); await app.import(toCSV(cards));
+  assert.equal(app.styleValues['--study-size'], '2');
+  app.nodes['text-larger'].click(); assert.equal(app.styleValues['--study-size'], '2.2');
+  app.nodes['text-smaller'].click(); assert.equal(app.styleValues['--study-size'], '2');
+  app.nodes['quiz-mode'].click(); assert.equal(app.styleValues['--study-size'], '2');
+  for (let i=0; i<20; i++) app.nodes['text-larger'].click();
+  assert.equal(app.styleValues['--study-size'], '3.6'); assert.equal(app.nodes['text-larger'].disabled, true);
+  for (let i=0; i<20; i++) app.nodes['text-smaller'].click();
+  assert.equal(app.styleValues['--study-size'], '1.2'); assert.equal(app.nodes['text-smaller'].disabled, true);
+});
+
+
+test('dark mode is the default and the toggle preserves the active session', async () => {
+  const html = await readFile(new URL('./index.html',import.meta.url),'utf8');
+  assert.match(html, /<html lang="en" data-theme="dark">/);
+  assert.match(html, /id="theme-toggle"[^>]*aria-pressed="true"[^>]*>Light<\/button>/);
+  const app = await appHarness(); await app.import(toCSV(cards)); app.nodes['quiz-mode'].click();
+  const before = app.inspect('question.question');
+  assert.equal(app.inspect('document.documentElement.dataset.theme'),'dark');
+  assert.equal(app.nodes['theme-toggle'].textContent,'Light');
+  assert.equal(app.nodes['theme-toggle'].attrs['aria-pressed'],'true');
+  app.nodes['theme-toggle'].click();
+  assert.equal(app.inspect('document.documentElement.dataset.theme'),'light');
+  assert.equal(app.nodes['theme-toggle'].textContent,'Dark');
+  assert.equal(app.nodes['theme-toggle'].attrs['aria-pressed'],'false');
+  assert.equal(app.inspect('question.question'),before);
+  app.nodes['theme-toggle'].click();
+  assert.equal(app.inspect('document.documentElement.dataset.theme'),'dark');
+  assert.equal(app.nodes['theme-toggle'].textContent,'Light');
+  assert.equal(app.nodes['theme-toggle'].attrs['aria-pressed'],'true');
+});
+
+
+test('dark styles apply by default even when the HTML theme attribute is absent', async () => {
+  const css = await readFile(new URL('./styles.css',import.meta.url),'utf8');
+  assert.match(css, /:root:not\(\[data-theme="light"\]\)\s*\{[^}]*--bg:#17231e/);
 });

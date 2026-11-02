@@ -128,21 +128,21 @@ main{padding:10px}
 }
 
 .theme-toggle{min-width:52px;min-height:44px;padding:8px 12px}
-:root[data-theme="dark"]{color-scheme:dark;--bg:#17231e;--paper:#25352c;--ink:#edf4e9;--line:#526457;--green:#b9dcb0;--red:#ffd1c8;--red-bg:#57312f}
-:root[data-theme="dark"] button:focus-visible,:root[data-theme="dark"] input:focus-visible{outline-color:#c1e39d}
-:root[data-theme="dark"] .mode-switch{background:#34483b}
-:root[data-theme="dark"] .mode-switch button{color:#c7d6c9}
-:root[data-theme="dark"] .mode-switch button[aria-pressed="true"]{background:#526957;color:#fff}
-:root[data-theme="dark"] .swap-control,:root[data-theme="dark"] dialog p{color:#d4e2d4}
-:root[data-theme="dark"] .swap-control input{background:#75877a}
-:root[data-theme="dark"] .swap-control input:checked{background:#8cb781}
-:root[data-theme="dark"] .flashcard{border-color:var(--line);box-shadow:0 4px 0 #405346}
-:root[data-theme="dark"] .flashcard.flipped{background:#354c3e}
-:root[data-theme="dark"] .secondary{border-color:#6e8273}
-:root[data-theme="dark"] .size-controls button,:root[data-theme="dark"] .question-card,:root[data-theme="dark"] .choice,:root[data-theme="dark"] .missed-item{background:var(--paper)}
-:root[data-theme="dark"] .primary{background:var(--green);border-color:var(--green);color:#17231e}
-:root[data-theme="dark"] .choice.correct{border-color:#83c58c;background:#284f33;color:#d5ffda}
-:root[data-theme="dark"] .choice.wrong{border-color:#f09687;background:var(--red-bg);color:var(--red)}
-:root[data-theme="dark"] .empty-state,:root[data-theme="dark"] .notice{background:#304238}
-:root[data-theme="dark"] .notice.error{background:#57312f;color:#ffd1c8}
-:root[data-theme="dark"] .missed-item p{color:#d1ded0}
+:root:not([data-theme="light"]){color-scheme:dark;--bg:#17231e;--paper:#25352c;--ink:#edf4e9;--line:#526457;--green:#b9dcb0;--red:#ffd1c8;--red-bg:#57312f}
+:root:not([data-theme="light"]) button:focus-visible,:root:not([data-theme="light"]) input:focus-visible{outline-color:#c1e39d}
+:root:not([data-theme="light"]) .mode-switch{background:#34483b}
+:root:not([data-theme="light"]) .mode-switch button{color:#c7d6c9}
+:root:not([data-theme="light"]) .mode-switch button[aria-pressed="true"]{background:#526957;color:#fff}
+:root:not([data-theme="light"]) .swap-control,:root:not([data-theme="light"]) dialog p{color:#d4e2d4}
+:root:not([data-theme="light"]) .swap-control input{background:#75877a}
+:root:not([data-theme="light"]) .swap-control input:checked{background:#8cb781}
+:root:not([data-theme="light"]) .flashcard{border-color:var(--line);box-shadow:0 4px 0 #405346}
+:root:not([data-theme="light"]) .flashcard.flipped{background:#354c3e}
+:root:not([data-theme="light"]) .secondary{border-color:#6e8273}
+:root:not([data-theme="light"]) .size-controls button,:root:not([data-theme="light"]) .question-card,:root:not([data-theme="light"]) .choice,:root:not([data-theme="light"]) .missed-item{background:var(--paper)}
+:root:not([data-theme="light"]) .primary{background:var(--green);border-color:var(--green);color:#17231e}
+:root:not([data-theme="light"]) .choice.correct{border-color:#83c58c;background:#284f33;color:#d5ffda}
+:root:not([data-theme="light"]) .choice.wrong{border-color:#f09687;background:var(--red-bg);color:var(--red)}
+:root:not([data-theme="light"]) .empty-state,:root:not([data-theme="light"]) .notice{background:#304238}
+:root:not([data-theme="light"]) .notice.error{background:#57312f;color:#ffd1c8}
+:root:not([data-theme="light"]) .missed-item p{color:#d1ded0}
