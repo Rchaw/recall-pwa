@@ -10,7 +10,7 @@ function selected() { return currentDeck; }
 function load() { resetStudy(); render(); }
 function endSession() {
   currentDeck = null; mode = 'review'; quizShuffled = false; $('quiz-shuffle').checked = false; resetStudy(); notice('');
-  for (const id of ['card-text','question-text','feedback','progress']) $(id).textContent = '';
+  for (const id of ['card-text','question-text','progress']) $(id).textContent = '';
   $('choices').replaceChildren(); $('missed-list').replaceChildren();
   $('flashcard').setAttribute('aria-label', 'Flip card');
   $('empty-import').textContent = 'Import CSV';
@@ -95,8 +95,6 @@ function renderQuiz() {
     }
     b.onclick = answered ? (result.correct ? null : nextQuestion) : () => answerQuestion(index); $('choices').append(b);
   });
-  $('feedback').className = `feedback${answered ? result.correct ? ' good' : ' bad' : ''}`;
-  $('feedback').textContent = answered ? (result.correct ? '✓' : '✕') : '';
 }
 function answerQuestion(index) {
   if (!session || !question || !recordAnswer(session, question, index)) return;
@@ -182,13 +180,20 @@ window.addEventListener('keydown', event => {
 if ('serviceWorker' in navigator && window.isSecureContext) {
   navigator.serviceWorker.register('./sw.js').catch(() => {});
 }
-let textSize = 140;
+$('theme-toggle').onclick = () => {
+  const dark = document.documentElement.dataset.theme !== 'dark';
+  document.documentElement.dataset.theme = dark ? 'dark' : 'light';
+  $('theme-toggle').textContent = dark ? 'Light' : 'Dark';
+  $('theme-toggle').setAttribute('aria-pressed', String(dark));
+  $('theme-toggle').setAttribute('aria-label', dark ? 'Switch to light mode' : 'Switch to dark mode');
+};
+let textSize = 200;
 function applyTextSize() {
   document.documentElement.style.setProperty('--study-size', `${textSize / 100}`);
-  $('text-smaller').disabled = textSize <= 60;
-  $('text-larger').disabled = textSize >= 300;
+  $('text-smaller').disabled = textSize <= 120;
+  $('text-larger').disabled = textSize >= 360;
 }
-$('text-smaller').onclick = () => { textSize = Math.max(60, textSize - 20); applyTextSize(); };
-$('text-larger').onclick = () => { textSize = Math.min(300, textSize + 20); applyTextSize(); };
+$('text-smaller').onclick = () => { textSize = Math.max(120, textSize - 20); applyTextSize(); };
+$('text-larger').onclick = () => { textSize = Math.min(360, textSize + 20); applyTextSize(); };
 applyTextSize();
 load();

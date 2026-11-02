@@ -25,6 +25,7 @@
         <div class="size-controls" role="group" aria-label="Text size"><button id="text-smaller" aria-label="Decrease text size">A−</button><button id="text-larger" aria-label="Increase text size">A+</button></div>
         <div id="review-controls" class="review-controls"><button id="previous" class="secondary" aria-label="Previous card">←</button><button id="flip" class="secondary">Flip</button><button id="next" class="secondary" aria-label="Next card">→</button></div>
         <label id="quiz-order-control" class="swap-control" hidden><input id="quiz-shuffle" type="checkbox" role="switch"><span>Shuffle</span></label>
+        <button id="theme-toggle" class="secondary theme-toggle" type="button" aria-pressed="false" aria-label="Switch to dark mode">Dark</button>
         <span id="progress" class="study-progress" aria-live="polite"></span>
         <button id="end-session" class="quiet">End session</button>
       </div>
@@ -35,7 +36,6 @@
         <div id="quiz-active" hidden>
           <div class="question-card"><div id="question-text" tabindex="-1"></div></div>
           <div id="choices" class="choices" aria-label="Answer choices"></div>
-          <div id="feedback" class="feedback" role="status"></div>
         </div>
         <div id="quiz-results" class="results" hidden><div class="result-actions"><button id="retry-missed" class="primary">Practice missed cards</button><button id="practice-again" class="secondary">Practice again</button></div><div id="missed-list"></div></div>
       </div>
