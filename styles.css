@@ -82,7 +82,7 @@ main{padding:30px 20px 22px}
 @media(prefers-reduced-motion:reduce){
 *{transition:none!important;scroll-behavior:auto!important}
 }
-:root{--study-size:1}
+:root{--study-size:1.4}
 main{max-width:1000px;margin:auto;padding:24px clamp(16px,5vw,64px) 30px}
 #deck-panel{margin:0}
 .empty-state{margin:20vh auto 0;max-width:500px;text-align:center;padding:38px}

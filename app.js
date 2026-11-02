@@ -182,13 +182,13 @@ window.addEventListener('keydown', event => {
 if ('serviceWorker' in navigator && window.isSecureContext) {
   navigator.serviceWorker.register('./sw.js').catch(() => {});
 }
-let textSize = 100;
+let textSize = 140;
 function applyTextSize() {
   document.documentElement.style.setProperty('--study-size', `${textSize / 100}`);
-  $('text-smaller').disabled = textSize <= 70;
-  $('text-larger').disabled = textSize >= 180;
+  $('text-smaller').disabled = textSize <= 60;
+  $('text-larger').disabled = textSize >= 300;
 }
-$('text-smaller').onclick = () => { textSize = Math.max(70, textSize - 10); applyTextSize(); };
-$('text-larger').onclick = () => { textSize = Math.min(180, textSize + 10); applyTextSize(); };
+$('text-smaller').onclick = () => { textSize = Math.max(60, textSize - 20); applyTextSize(); };
+$('text-larger').onclick = () => { textSize = Math.min(300, textSize + 20); applyTextSize(); };
 applyTextSize();
 load();
